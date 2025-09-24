@@ -7,15 +7,33 @@ export default defineNuxtConfig({
       mode: 'out-in',
     },
     head: {
-      title: "Afaqy",
+      title: "Heaven - بيرث",
       charset: "utf-8",
       viewport: "width=device-width, initial-scale=1",
-      htmlAttrs: { lang: "en", class: "html_direction" },
+      htmlAttrs: { lang: "ar", class: "html_direction" },
       meta: [
-        { name: "description", content: "Afaqy" },
+        { name: "description", content: "Heaven Birth" },
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/logo.svg" },
+      ],
+      script: [
+        {
+          children: `
+            (function () {
+              const savedLang = localStorage.getItem("locale") || "ar";
+              const html = document.documentElement;
+              html.setAttribute("lang", savedLang);
+              html.setAttribute("dir", savedLang === "ar" ? "rtl" : "ltr");
+              window.__NUXT_LANG__ = savedLang;
+              window.__NUXT_TEXTS__ = {
+                ar: "العربية",
+                en: "English",
+              };
+            })();
+          `,
+          type: "text/javascript",
+        },
       ],
     },
   },
@@ -44,6 +62,10 @@ export default defineNuxtConfig({
     define: {
       "process.env.DEBUG": false,
     },
+  },
+
+  build: {
+    transpile: ["@fawmi/vue-google-maps"],
   },
 
   compatibilityDate: "2025-01-12",

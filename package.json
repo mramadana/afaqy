@@ -40,6 +40,6 @@
     "vue-google-maps-ui": "^1.0.0",
     "vue-star-rating": "^2.1.0",
     "vue3-otp-input": "^0.4.1",
-    "yup": "^1.6.1"
+    "yup": "^1.7.1"
   }
 }

@@ -14,7 +14,7 @@
 
         </div>
 
-        <LayoutSidebar :is-active="isActive" @toggle-active="toggleActive"  />
+        <!-- <LayoutSidebar :is-active="isActive" @toggle-active="toggleActive"  /> -->
 
     </div>
 </template>
