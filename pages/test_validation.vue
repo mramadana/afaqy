@@ -4,11 +4,29 @@
             
             <div class="container">
 
-                <h2>remove text </h2>
-
-                <h1>Home page 23333333333</h1>
+                <h1 class="mb-4">validation page</h1>
 
                 <form @submit.prevent="submitForm">
+
+                    <div class="position-relative single-input-upload mb-4">
+                        <div class="main_input special-input without-edit">
+                            <div
+                                class="d-flex align-items-center justify-content-center gap-2 flex-grow-1 gray">
+                                <span>{{ $t("settings.attach_image") }}</span>
+                            </div>
+                        </div>
+                        <!-- if you want to remove the validation, you can set the required to false
+                        and remove showValidation -->
+                        <GlobalImgUploader 
+                            ref="imageUploader"
+                            acceptedFiles="image/*" 
+                            :IsMultible="true" 
+                            :resetTrigger="resetImageTrigger"
+                            :showValidation="showValidation"
+                            :required="true"
+                            :errorMessage="t('validation.image_required')"
+                            @uploaded-images-updated="updateUploadedImages" />
+                    </div>
 
                     <FormInput 
                         v-model:modelValue="formData.phone"
@@ -44,8 +62,8 @@
                         v-model:modelValue="formData.lastnameee"
                         name="lastnameee"
                         type="text"
-                        :label="$t('validation.koko')"
-                        :placeholder="$t('validation.toto')"
+                        :label="$t('validation.lastnameee')"
+                        :placeholder="$t('validation.lastnameee')"
                         :validation-schema="validations.lastnameee"
                         :showErrors="showValidation"
                     />
@@ -85,24 +103,96 @@
                         :label="$t('categories.default_section2')"
                     />
 
-                    <div class="position-relative single-input-upload mb-5">
-                        <div class="main_input special-input without-edit">
-                            <div
-                                class="d-flex align-items-center justify-content-center gap-2 flex-grow-1 gray">
-                                <span>{{ $t("settings.attach_image") }}</span>
-                                <font-awesome-icon :icon="['fas', 'arrow-up-from-bracket']"
-                                    class="edit-icon fz-16" />
-                            </div>
+                    <!-- Checkbox Example -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ $t('Auth.terms_and_conditions') }}</label>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="termsCheckbox"
+                                name="terms"
+                                v-model="formData.acceptTerms">
+                            <label class="form-check-label" for="termsCheckbox">
+                                {{ $t('Auth.accept_terms') }}
+                            </label>
                         </div>
-                        <GlobalImgUploader 
-                            ref="imageUploader"
-                            acceptedFiles="image/*" 
-                            :IsMultible="true" 
-                            :resetTrigger="resetImageTrigger"
-                            :showValidation="showValidation"
-                            :required="true"
-                            errorMessage="يرجى رفع صورة واحدة على الأقل"
-                            @uploaded-images-updated="updateUploadedImages" />
+                        <div v-if="showValidation && validations.acceptTerms" class="text-danger mt-1">
+                            <span v-if="getValidationError('acceptTerms')">{{ getValidationError('acceptTerms') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Radio Button Example -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ $t('Auth.gender') }}</label>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="gender" 
+                                id="male"
+                                value="male"
+                                v-model="formData.gender">
+                            <label class="form-check-label" for="male">
+                                {{ $t('Auth.male') }}
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="gender" 
+                                id="female"
+                                value="female"
+                                v-model="formData.gender">
+                            <label class="form-check-label" for="female">
+                                {{ $t('Auth.female') }}
+                            </label>
+                        </div>
+                        <div v-if="showValidation && validations.gender" class="text-danger mt-1">
+                            <span v-if="getValidationError('gender')">{{ getValidationError('gender') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Multiple Checkboxes Example -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ $t('Auth.interests') }}</label>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="sports"
+                                value="sports"
+                                v-model="formData.interests">
+                            <label class="form-check-label" for="sports">
+                                {{ $t('Auth.sports') }}
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="music"
+                                value="music"
+                                v-model="formData.interests">
+                            <label class="form-check-label" for="music">
+                                {{ $t('Auth.music') }}
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="reading"
+                                value="reading"
+                                v-model="formData.interests">
+                            <label class="form-check-label" for="reading">
+                                {{ $t('Auth.reading') }}
+                            </label>
+                        </div>
+                        <div v-if="showValidation && validations.interests" class="text-danger mt-1">
+                            <span v-if="getValidationError('interests')">{{ getValidationError('interests') }}</span>
+                        </div>
                     </div>
 
                     <div class="d-flex gap-3">
@@ -134,10 +224,10 @@ const loading = ref(false);
 
 const axios = useApi();
 
-// Ref للـ image uploader
+// image uploader
 const imageUploader = ref(null);
 
-// بيانات بسيطة جداً
+// simple data
 const formData = reactive({
     phone: null,
     email: null,
@@ -146,65 +236,80 @@ const formData = reactive({
     defaultSection: null,
     defaultSection2: null,
     defaultSection3: null,
-    iban: null
+    iban: null,
+    acceptTerms: false,  // checkbox
+    gender: null,        // radio button
+    interests: []        // multiple checkboxes
 });
 
 const resetImageTrigger = ref(0);
 
-// بيانات الـ dropdown
+// dropdown data
 const defaultSections = ref([
     { name: 'مستلزمات الأطفال', value: 'baby_supplies' },
     { name: 'الأعشاب', value: 'herbs' },
     { name: 'الطبخ', value: 'cuisine' }
 ]);
                                                                                                                                 
-// validations بسيط
-const { phoneNumber, email, fullName, lastnameee, iban } = useValidationSchema();
+// validations simple
+const { phoneNumber, email, fullName, lastnameee, iban, checkbox, radioButton, multipleCheckboxes } = useValidationSchema();
 const validations = {
     phone: phoneNumber(),
     email: email(), 
     fullname: fullName(),
     lastnameee: lastnameee(),
-    iban: iban()
+    iban: iban(),
+    acceptTerms: checkbox('Auth.terms_and_conditions'),
+    gender: radioButton('Auth.gender'),
+    interests: multipleCheckboxes('Auth.interests', 2) // minimum 2 checkboxes
 };
 
-// استخدام الـ composable للفحص
+// use the composable for the validation
 const { isFormValid, resetForm, scrollToFirstError } = useFormValidation();
 
-// تحديد الـ dropdowns المطلوبة
-const requiredDropdowns = ['defaultSection', 'defaultSection2'];
-
 const uploadedImage = ref([]);
-// دالة لإعادة تعيين الفورم (يمكن استدعاؤها من أي مكان)
+// function to reset the form (can be called from anywhere)
 const handleResetForm = () => {
     resetForm(formData, showValidation);
-    uploadedImage.value = []; // إعادة تعيين الصور في الصفحة
+    uploadedImage.value = []; // reset the images in the page
     
-    // إعادة تعيين الصور في الـ component مباشرة
-    if (imageUploader.value) {
-        imageUploader.value.uploadedImages = [];
-    }
-    
-    resetImageTrigger.value++; // تؤدي trigger للـ component
+    resetImageTrigger.value++; // trigger for the component
     console.log('Reset triggered:', resetImageTrigger.value);
 };
 
-// دالة بسيطة لتحديث الصور
+// simple function to update the images
 const updateUploadedImages = (images) => {
     uploadedImage.value = images;
 };
 
+// function to get validation error for a specific field
+const getValidationError = (field) => {
+    if (!showValidation.value || !validations[field]) return null;
+    try {
+        validations[field].validateSync(formData[field]);
+        return null;
+    } catch (error) {
+        return error.message;
+    }
+};
+
 const submitForm = async () => {
     showValidation.value = true;
+    
+    // check the images first (if the ImgUploader is at the beginning of the form)
+    const imagesValid = imageUploader.value?.validate() || false;
     const isValid = isFormValid(formData, validations);
 
-    if(!isValid){
-        // التمرير إلى أول عنصر به خطأ
-        if (!isValid) {
+    if(!isValid || !imagesValid){
+        // first check the images
+        if (!imagesValid) {
+            console.log("Images validation failed");
+        } else if (!isValid) {
+            // if the images are valid but the inputs have errors
             scrollToFirstError(formData, validations);
         }
         console.log("22222222222");
-    } else{
+    } else {
         console.log("11111111111");
         try {
         

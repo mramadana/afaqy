@@ -60,8 +60,8 @@ export const useValidationSchema = () => {
         .string()
         .trim()
         .required(t('validation.required_with_label', { field: t('validation.lastnameee') }))
-        .min(4, t('validation.min', { field: label, min: 3 }))
-        .max(10, t('validation.max', { field: label, max: 11 }))
+        .min(3, t('validation.lastnameee') + " " + t('validation.min', { field: label, min: 3 }))
+        .max(10, t('validation.lastnameee') + " " + t('validation.max', { field: label, max: 10 }))
     
 
     // Full Name Schema
@@ -71,17 +71,17 @@ export const useValidationSchema = () => {
         .string()
         .trim()
         .required(t('validation.required_with_label', { field: t('validation.fullName') }))
-        .min(3, t('validation.min', { field: label, min: 3 }))
-        .max(50, t('validation.max', { field: label, max: 50 }))
+        .min(3, t('validation.fullName') + " " + t('validation.min', { field: label, min: 3 }))
+        .max(50, t('validation.fullName') + " " + t('validation.max', { field: label, max: 50 }))
         .label(label);
 
     // Email Schema 
-
     const email = (label: string) =>
       yup
         .string()
         .trim()
         .required(t('validation.required_with_label', { field: t('Auth.email') }))
+        .matches(/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/, t('validation.email', { field: label }))
         .email(t('validation.email', { field: label }));
 
     // iban Schema
@@ -90,8 +90,8 @@ export const useValidationSchema = () => {
         .string()
         .trim()
         .required(t('validation.required_with_label', { field: t('Auth.iban') }))
-        .min(14, t('validation.min', { field: label, min: 14 }))
-        .max(29, t('validation.max', { field: label, max: 29 }))
+        .min(14, t('Auth.iban') + " " + t('validation.min', { field: label, min: 14 }))
+        .max(29, t('Auth.iban') + " " + t('validation.max', { field: label, max: 29 }))
         // .matches(/^[0-9]+$/, t('validation.iban_only_digits'))
         .label(label);
 
@@ -124,6 +124,28 @@ export const useValidationSchema = () => {
     .max(500, t('validation.max', { max: 500 }))
     .label(t('complaints.complaint_description'));
 
+    // Checkbox Schema (for terms and conditions, agreements, etc.)
+    const checkbox = (labelKey: string) =>
+      yup
+        .boolean()
+        .required(t('validation.required_with_label', { field: t(labelKey) }))
+        .oneOf([true], t('validation.required_with_label', { field: t(labelKey) }))
+        .label(t(labelKey));
+
+    // Radio Button Schema (for gender, preferences, etc.)
+    const radioButton = (labelKey: string) =>
+      yup
+        .string()
+        .required(t('validation.required_with_label', { field: t(labelKey) }))
+        .label(t(labelKey));
+
+    // Multiple Checkboxes Schema (for interests, skills, etc.)
+    const multipleCheckboxes = (labelKey: string, minRequired: number = 1) =>
+      yup
+        .array()
+        .min(minRequired, t('validation.select_at_least', { field: t(labelKey), min: minRequired }))
+        .required(t('validation.required_with_label', { field: t(labelKey) }))
+        .label(t(labelKey));
 
   
   return {
@@ -139,6 +161,9 @@ export const useValidationSchema = () => {
     complaintDescription,
     identityNumber,
     lastnameee,
-    iban
+    iban,
+    checkbox,
+    radioButton,
+    multipleCheckboxes
   }
 }

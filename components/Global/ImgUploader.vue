@@ -1,13 +1,14 @@
 <template>
-  <input
-    v-if="!readOnly"
-    :class="IsMultible ? 'multiple-input' : '' + readOnly ? 'readOnly' : ''"
-    type="file"
-    :multiple="IsMultible"
-    ref="deleteVal"
-    :name="name"
-    :accept="acceptedFiles"
-    @change="handleFileChange" />
+  <div ref="uploaderContainer">
+    <input
+      v-if="!readOnly"
+      :class="IsMultible ? 'multiple-input' : '' + readOnly ? 'readOnly' : ''"
+      type="file"
+      :multiple="IsMultible"
+      ref="deleteVal"
+      :name="name"
+      :accept="acceptedFiles"
+      @change="handleFileChange" />
   <div :class="IsMultible ? 'multiple-images' : 'single-image'">
     <TransitionGroup name="image-list" tag="div" class="images-container">
       <div
@@ -28,9 +29,10 @@
     </TransitionGroup>
   </div>
   
-  <!-- Validation Error Message -->
-  <div v-if="showValidation && !uploadedImages.length" style="color: red; font-size: 12px; margin-top: 5px;">
-      {{ errorMessage }}
+   <!-- Validation Error Message -->
+   <div v-if="showValidation && !uploadedImages.length" style="color: red; font-size: 12px; margin-top: 5px;">
+       {{ errorMessage }}
+   </div>
   </div>
 </template>
 
@@ -56,7 +58,6 @@ export default {
     },
     errorMessage: {
       type: String,
-      default: 'يرجى رفع صورة واحدة على الأقل'
     }
   },
 data() {
@@ -112,18 +113,31 @@ methods: {
 return true; // All images are within the size limit
 },
   
-removeImage(index) {
-  const removed = this.uploadedImages[index];
-  // أبعت للوالد ID الصورة المحذوفة (لو موجود)
-  if (removed.id) {
-    this.$emit('remove-image', removed.id);
-  }
-  // احذف الصورة من القائمة
-  this.uploadedImages.splice(index, 1);
-  // أبعت للأب array محدثة من File objects فقط
-  const files = this.uploadedImages.map(i => i.file).filter(f => f);
-  this.$emit('uploaded-images-updated', files);
-}
+ removeImage(index) {
+   const removed = this.uploadedImages[index];
+   // pass the image id to parent
+   if (removed.id) {
+     this.$emit('remove-image', removed.id);
+   }
+   // remove the image from the list
+   this.uploadedImages.splice(index, 1);
+   // pass the updated array of File objects to parent
+   const files = this.uploadedImages.map(i => i.file).filter(f => f);
+   this.$emit('uploaded-images-updated', files);
+ },
+
+ // validation function
+ validate() {
+   if (this.required && this.uploadedImages.length === 0) {
+     // pass error to parent
+     this.$refs.uploaderContainer.scrollIntoView({ 
+       behavior: 'smooth', 
+       block: 'center' 
+     });
+     return false;
+   }
+   return true;
+ }
 },
 
 mounted() {
@@ -299,13 +313,14 @@ watch: {
 }
 
 .multiple-input {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 45px;
   position: absolute;
   opacity: 0;
   overflow: hidden;
   cursor: pointer;
   right: 0;
+  top: 0;
 }
 
 
