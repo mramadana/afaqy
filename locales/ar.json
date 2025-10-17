@@ -54,7 +54,7 @@
         "select_size": "يرجى اختيار الحجم",
         "must_add_attribute_first": "يجب إضافة السمة أولاً قبل التأكيد",
         "returnable": "قابلية الإرجاع مطلوبة",
-        "lastnameee": "اسم العائلة",
+        "lastname": "اسم العائلة",
         "image_required": "يرجى رفع صورة واحدة على الأقل"
       },
 

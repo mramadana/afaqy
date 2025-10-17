@@ -1,7 +1,6 @@
 <template>
   <div class="form-group">
-    <label :for="name" class="label" :style="{ color: labelColor }">{{ label }}</label>
-    <span v-if="subLabel" class="sub-label ms-1" :style="{ color: subLabelColor }">{{ subLabel }}</span>
+    <label :for="name" class="label">{{ label }}</label>
     <div class="input-wrapper">
 
       <template v-if="readonly">
@@ -25,13 +24,13 @@
             :name="name" 
             :placeholder="placeholder" 
             class="main_input"
-            :class="{ 'is-invalid': showErrors && hasError }"
+            :class="{ 'is-invalid': (showErrors || hasStartedTyping) && hasError }"
           />
           <img v-if="icon" :src="icon" alt="icon" class="input-icon position-absolute top-50" :class="localeDir" />
         </div>
   
         <!-- Display validation error message -->
-        <p v-if="showErrors && hasError" class="error-message text-danger" :class="localeDir">{{ errorMessage }}</p>
+        <p v-if="(showErrors || hasStartedTyping) && hasError" class="error-message text-danger" :class="localeDir">{{ errorMessage }}</p>
       </template>
       
     </div>
@@ -55,19 +54,6 @@ const props = defineProps({
     type: String,
     required: false
   },
-  subLabel: {
-    type: String,
-    required: false
-  },
-  labelColor: {
-    type: String,
-    required: false
-  },
-  subLabelColor: {
-    type: String,
-    required: false,
-    default: '#AEAEAE'
-  },
   placeholder: {
     type: String,
     required: false
@@ -75,34 +61,6 @@ const props = defineProps({
   icon: {
     type: String,
     required: false
-  },
-  inputHeight: {
-    type: String,
-    default: '64px'
-  },
-  borderRadius: {
-    type: String,
-    default: '32px'
-  },
-  inputFontSize: {
-    type: String,
-    required: false
-  },
-  inputColor: {
-    type: String,
-    required: false
-  },
-  borderColor: {
-    type: String,
-    required: false
-  },
-  inputFontWeight: {
-    type: String,
-    required: false
-  },
-  inputBgColor: {
-    type: String,
-    default: '#F0F0F0'
   },
   readonly: {
     type: Boolean,
@@ -127,6 +85,23 @@ const localeDir = computed(() => {
 })
 
 const modelValue = defineModel('modelValue')
+
+// Track if user started typing
+const hasStartedTyping = ref(false)
+
+// Watch modelValue to detect when user starts typing
+watch(modelValue, (newVal) => {
+  if (newVal && newVal.toString().trim() !== '') {
+    hasStartedTyping.value = true
+  }
+})
+
+// Reset hasStartedTyping when showErrors becomes false (form reset)
+watch(() => props.showErrors, (newVal) => {
+  if (!newVal) {
+    hasStartedTyping.value = false
+  }
+})
 
 // Manual validation
 const hasError = computed(() => {

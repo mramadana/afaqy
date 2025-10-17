@@ -59,12 +59,12 @@
                     />
 
                     <FormInput 
-                        v-model:modelValue="formData.lastnameee"
-                        name="lastnameee"
+                        v-model:modelValue="formData.lastname"
+                        name="lastname"
                         type="text"
-                        :label="$t('validation.lastnameee')"
-                        :placeholder="$t('validation.lastnameee')"
-                        :validation-schema="validations.lastnameee"
+                        :label="$t('validation.lastname')"
+                        :placeholder="$t('validation.lastname')"
+                        :validation-schema="validations.lastname"
                         :showErrors="showValidation"
                     />
                     <FormInput 
@@ -232,7 +232,7 @@ const formData = reactive({
     phone: null,
     email: null,
     fullname: null,
-    lastnameee: null,
+    lastname: null,
     defaultSection: null,
     defaultSection2: null,
     defaultSection3: null,
@@ -252,13 +252,13 @@ const defaultSections = ref([
 ]);
                                                                                                                                 
 // validations simple
-const { phoneNumber, email, fullName, lastnameee, iban, checkbox, radioButton, multipleCheckboxes } = useValidationSchema();
+const { phoneNumber, email, fullName, lastname, iban, checkbox, radioButton, multipleCheckboxes } = useValidationSchema();
 const validations = {
-    phone: phoneNumber(),
-    email: email(), 
-    fullname: fullName(),
-    lastnameee: lastnameee(),
-    iban: iban(),
+    phone: phoneNumber(t('Auth.mobile_number')),
+    email: email(t('Auth.email')), 
+    fullname: fullName(t('validation.fullName')),
+    lastname: lastname(t('validation.lastname')),
+    iban: iban(t('Auth.iban')),
     acceptTerms: checkbox('Auth.terms_and_conditions'),
     gender: radioButton('Auth.gender'),
     interests: multipleCheckboxes('Auth.interests', 2) // minimum 2 checkboxes
